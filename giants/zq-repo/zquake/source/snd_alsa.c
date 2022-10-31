@@ -56,7 +56,7 @@ void SNDDMA_Init_Cvars_ALSA (void)
 {
     Cvar_Get ("s_stereo", "1", CVAR_ARCHIVE);
     Cvar_Get ("s_rate", "0", CVAR_ARCHIVE);
-    Cvar_Get ("s_device", "plug:hw", CVAR_ARCHIVE);
+    Cvar_Get ("s_device", "pipewire", CVAR_ARCHIVE);
     Cvar_Get ("s_bits", "0", CVAR_ARCHIVE);
 }
 
@@ -115,7 +115,7 @@ qbool SNDDMA_Init_ALSA (void)
     stereo = Cvar_VariableValue("s_stereo");
 
     // Initialise ALSA...
-    err = alsa_snd_pcm_open(&pcm, pcmname, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+    err = alsa_snd_pcm_open(&pcm, pcmname, SND_PCM_STREAM_PLAYBACK, SND_PCM_EINTR);
     if(0 > err)
     {
         Sys_Printf("Error: audio open error: %s\n", alsa_snd_strerror(err));

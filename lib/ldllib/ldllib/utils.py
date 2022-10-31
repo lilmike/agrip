@@ -937,7 +937,11 @@ def use_repo_bins(base):
 		maptools.vis = bin_base / 'vis' / 'Release' / 'vis.exe'
 		maptools.bspinfo = bin_base / 'bspinfo' / 'Release' / 'bspinfo.exe'
 	else:
-		raise NotImplementedError
+		bin_base = base / 'giants' / 'Quake-Tools' / 'qutils' / 'qbsp'
+		maptools.qbsp = bin_base / 'qbsp'
+		maptools.light = bin_base / 'light'
+		maptools.vis = bin_base / 'vis'
+		maptools.bspinfo = bin_base / 'bspinfo'
 
 
 # Texture WAD files

@@ -25,6 +25,7 @@ class LaunchState(enum.Enum):
 def opener(openee):
 	doset(
 		mac=lambda: check_call(['open', openee]),
+        linux=lambda: check_call(['xdg-open', openee]),
 		windows=lambda: startfile(openee))
 
 

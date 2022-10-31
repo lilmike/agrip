@@ -146,6 +146,7 @@ def platform_appropriate_grouping(parent, label):
 
 	return doset(
 		mac=mac_gropuing,
+        linux=wx.StaticBoxSizer(wx.VERTICAL, parent, label),
 		windows=wx.StaticBoxSizer(wx.VERTICAL, parent, label))
 
 

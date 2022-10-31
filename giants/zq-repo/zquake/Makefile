@@ -114,9 +114,9 @@ ifneq (,$(findstring apple,$(MACHINE)))
 endif
 
 # add special architecture based flags
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	DEST_ARCH			:=x86
-	ARCH_CFLAGS			:=-march=$(shell echo $(MACHINE) | sed -e 's/\-.*//g')
+	ARCH_CFLAGS			:=-m32 #-march=$(shell echo $(MACHINE) | sed -e 's/\-.*//g' -e 's/_/-/g')
 endif
 #ifeq ($(ARCH),ppc)		# MacOS-X/ppc
 #	DEST_ARCH			:=ppc
@@ -165,7 +165,7 @@ RELEASE_BUILD_DIR		 =$(MAIN_DIR)/release-$(ARCH)
 # compiler flags
 PRJ_FLAGS				 = -DVWEP_TEST #-DHALFLIFEBSP
 MAUTH_FLAGS				 =-DMAUTH # the Master AUTHentication patch
-BASE_CFLAGS				 =-Wall -Wno-implicit-function-declaration -Wno-format-y2k -DAGRIP $(PRJ_FLAGS) $(ARCH_CFLAGS) $(MAUTH_FLAGS)
+BASE_CFLAGS				 =-fno-pic -fno-pie -no-pie -Wall -Wno-implicit-function-declaration -Wno-format-y2k -DAGRIP $(PRJ_FLAGS) $(ARCH_CFLAGS) $(MAUTH_FLAGS)
 BASE_RELEASE_CFLAGS		 =-ffast-math -fomit-frame-pointer -fexpensive-optimizations
 ifneq ($(CC_BASEVERSION),4) # if we're not auto-vectorizing then we can unroll the loops (mdfour ahoy)
 	BASE_RELEASE_CFLAGS  += -funroll-loops
@@ -186,7 +186,7 @@ endif
 endif
 BASE_DEBUG_CFLAGS		 =-g -D_DEBUG
 
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	# use define for special assembly routines and usage for DGA based mousecode:
 	BASE_CFLAGS			+= -Did386 -DUSE_DGA -DUSE_ALSA
 	CL_DLFLAGS			+= -ldl
@@ -253,14 +253,14 @@ DO_CC					+= -o $@ -c $<
 
 DO_O_CC					 =$(CC) -O $(CFLAGS) -o $@ -c $<
 DO_AS					 =$(CC) $(CFLAGS) -x assembler-with-cpp
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	DO_AS				+= -DELF
 endif
 DO_AS					+= -o $@ -c $<
 
 # opengl builds
 BASE_GLCFLAGS			 =-DGLQUAKE -I/usr/include
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	ARCH_GLCFLAGS		 =-DUSE_VMODE -I/usr/X11R6/include
 endif
 #ifeq ($(ARCH),ppc)		# MacOS-X/ppc
@@ -282,14 +282,14 @@ GLCFLAGS				 =$(ARCH_GLCFLAGS) $(BASE_GLCFLAGS)
 
 DO_GL_CC				 =$(CC) $(CFLAGS) $(GLCFLAGS) -o $@ -c $<
 DO_GL_AS				 =$(CC) $(CFLAGS) $(GLCFLAGS) -x assembler-with-cpp
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	DO_GL_AS			+= -DELF
 endif
 DO_GL_AS				+= -o $@ -c $<
 
 
 # linker flags
-LDFLAGS					 +=-lm
+LDFLAGS					 +=-lm 
 CONSOLE_LDFLAGS			 =-lvga
 X11_LDFLAGS				 =-L/usr/X11R6/lib -lX11 -lXext -lXxf86dga -lXxf86vm
 SDL_LDFLAGS          	 =`sdl-config --static-libs`
@@ -312,7 +312,7 @@ endif
 # opengl build
 #BASE_GL_LDFLAGS			 =-L/usr/X11R6/lib -lGL -lm -lX11 -lXext
 ARCH_GL_LDFLAGS			 =
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	ARCH_GL_LDFLAGS		 =-lXxf86dga -lXxf86vm
 endif
 ifeq ($(ARCH),hppa)		# HP-UX/PA-RISC
@@ -350,7 +350,7 @@ GL_TARGETS				 =$(BUILD_DIR)/zquake-glx
 SOFT_TARGETS			 =$(BUILD_DIR)/zquake-x11
 CONSOLE_TARGETS			 =
 SDL_TARGETS              =$(BUILD_DIR)/zquake-sdl $(BUILD_DIR)/zquake-glsdl
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	CONSOLE_TARGETS		 = $(BUILD_DIR)/zquake-svga
 endif
 #ifeq ($(ARCH),ppc)		# MacOS-X/ppc
@@ -672,7 +672,7 @@ else
 endif
 
 QWSV_AS_OBJS =
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter, $(ARCH),x86_64 x86))		# Linux/x86
 	QWSV_AS_OBJS = \
 		$(BUILD_DIR)/server/math.o \
 		$(BUILD_DIR)/server/sys_x86.o
@@ -907,7 +907,7 @@ endif
 QWCL_PLATFORM_OBJS		 = \
 	$(BUILD_DIR)/client/cd_null.o \
 	$(BUILD_DIR)/client/snd_osnull.o
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	QWCL_PLATFORM_OBJS	 = \
 		$(BUILD_DIR)/client/cd_linux.o \
 		$(BUILD_DIR)/client/snd_linux.o \
@@ -1364,7 +1364,7 @@ endif
 GLQWCL_PLATFORM_OBJS	 =\
 		$(BUILD_DIR)/glclient/cd_null.o \
 		$(BUILD_DIR)/glclient/snd_osnull.o
-ifeq ($(ARCH),x86)		# Linux/x86
+ifeq ($(ARCH),$(filter $(ARCH),x86_64 x86))		# Linux/x86
 	GLQWCL_PLATFORM_OBJS = \
 		$(BUILD_DIR)/glclient/cd_linux.o \
 		$(BUILD_DIR)/glclient/snd_linux.o \

@@ -106,7 +106,7 @@ def run(args, errorcheck=True, verbose=False, quiet=False, throw=False):
 	quiet      - whether to print anything to stdout (overrides 'verbose')
 	throw      - whether to raise a CalledProcessError if encountered"""
 	try:
-		use_shell = doset(mac=False, windows=True)
+		use_shell = doset(mac=False, windows=True, linux=False)
 		res = subprocess.run(
 			args, capture_output=True, check=errorcheck, shell=use_shell)
 		# We may not be doing strict error-checking (e.g. for vis) but still
@@ -120,6 +120,7 @@ def run(args, errorcheck=True, verbose=False, quiet=False, throw=False):
 			program = error.cmd[0].name
 			details = doset(
 				mac=lambda: error.output.decode().splitlines()[-1],
+                linux=lambda: error.output.decode().splitlines()[-1],
 				windows=(
 					'Details are unavailable on Windows. This may be due to '
 					'the path to the WAD file containing the textures being '
@@ -128,6 +129,7 @@ def run(args, errorcheck=True, verbose=False, quiet=False, throw=False):
 					'can address this.'))
 			message = doset(
 				mac=f'{program}: {details}',
+                linux=f'{program}: {details}',
 				windows=f'{program} reported an error. {details}')
 
 			if 'Token too large on line ' in message:

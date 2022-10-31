@@ -18,6 +18,7 @@ if not _inited:
 		launcher_dir = Path(getattr(sys, '_MEIPASS'))
 		root_dir = doset(
 			mac=launcher_dir.parent.parent.parent,
+            linux=launcher_dir.parent,
 			windows=launcher_dir.parent)
 	else:
 		# Did we already run a build, and thus can use the data already there?
@@ -26,6 +27,7 @@ if not _inited:
 			# Using latest .py code, but already-prepared frozen assets
 			launcher_dir = doset(
 				mac=collated / 'AudioQuake.app' / 'Contents' / 'MacOS',
+                linux=collated / '_internal',
 				windows=collated / Build.dir_windows_app)
 			root_dir = collated
 		else:

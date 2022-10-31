@@ -18,6 +18,7 @@ class EngineWrapper(threading.Thread):
 		threading.Thread.__init__(self)
 		self._engine = doset(
 			mac=dirs.engines / 'zquake-glsdl',
+            linux=dirs.engines / 'zquake-glx',
 			windows=dirs.engines / 'zquake-gl.exe')
 		self._command_line = (self._engine,) + args
 		self._on_error = on_error
@@ -39,11 +40,11 @@ class EngineWrapper(threading.Thread):
 				self._command_line,
 				bufsize=1,
 				stdout=subprocess.PIPE,
-				stderr=subprocess.PIPE)
+				stderr=subprocess.PIPE, universal_newlines=True)
 
 			while True:
 				retcode = proc.poll()
-				line = proc.stdout.readline().rstrip().decode('ascii')
+				line = proc.stdout.readline().rstrip()
 
 				length = len(line)
 				if length > 0:
@@ -59,7 +60,7 @@ class EngineWrapper(threading.Thread):
 
 				if retcode is not None:
 					if retcode != 0:
-						stderr = proc.stderr.read().decode('ascii')
+						stderr = proc.stderr.read()
 						if len(stderr) > 0:
 							raise EngineWrapperError(stderr)
 						else:

@@ -173,7 +173,7 @@ void BOPS_Error (void)
 	Sys_Error ("BoxOnPlaneSide:  Bad signbits");
 }
 
-#if !id386
+#if !defined(id386) || defined(SERVERONLY)
 
 /*
 ==================
@@ -282,8 +282,8 @@ if (sides == 0)
 	return sides;
 }
 
-#endif
 
+#endif
 
 
 void vectoangles(vec3_t vec, vec3_t ang)

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Get all the bits and bobs ready to build AudioQuake"""
 import argparse
-from os import chdir
+from os import chdir, rmdir
 from pathlib import Path
 import re
 import string
 import shutil
 from uuid import uuid4
+import glob
 
 try:
 	import winshell
@@ -258,6 +259,7 @@ def run_pyinstaller():
 def copy_in_rcon():
 	rcon_bin = doset(
 		mac='rcon',
+		linux='rcon',
 		windows='rcon.exe')
 
 	shutil.copy(
@@ -297,10 +299,12 @@ def make_collated_dir():
 def move_app_to_collated_dir():
 	source = doset(
 		mac=Build.dir_dist / 'AudioQuake.app',
+		linux=Build.dir_dist / 'AudioQuake',
 		windows=Build.dir_dist / 'AudioQuake')
 
 	destination = doset(
 		mac=Build.dir_dist_collated,
+		linux=Build.dir_dist_collated,
 		windows=Build.dir_dist_collated)
 
 	if source.is_dir() and destination.is_dir():
@@ -326,13 +330,23 @@ def windows_make_shortcut_to_app():
 		shortcut.description = "AudioQuake & LDL Launcher"
 
 
+def linux_move_executables():
+	print("Moving linux executables into main directory")
+	pyinstaller_built_folder = str(Build.dir_dist_collated)
+	shutil.move(pyinstaller_built_folder + '/AudioQuake', pyinstaller_built_folder + '/AudioQuake.orig')
+	files = glob.glob(pyinstaller_built_folder + '/AudioQuake.orig/*')
+	for file in files:
+		shutil.move(file, pyinstaller_built_folder)
+	rmdir(pyinstaller_built_folder + '/AudioQuake.orig')
+	
+
 def make_zip():
 	program_name = 'AudioQuake+LDL'
-	platform_name = doset(mac='Mac', windows='Windows')
+	platform_name = doset(mac='Mac', windows='Windows', linux='Linux')
 	archive_name = f'{program_name}_{version_string}_{platform_name}'
 	# TODO: I think that unlinking first is needed, as it seems like otherwise
-	#       things may only be added to the archive...
-	#       https://github.com/python/cpython/blob/b2a91e0c9ee18b50cc86b21211c2258520a9f5d0/Lib/shutil.py#L935
+	#	   things may only be added to the archive...
+	#	   https://github.com/python/cpython/blob/b2a91e0c9ee18b50cc86b21211c2258520a9f5d0/Lib/shutil.py#L935
 	(Build.dir_dist / f'{archive_name}.zip').unlink(missing_ok=True)
 	shutil.make_archive(
 		Build.dir_dist / archive_name, 'zip', Build.dir_dist_collated)
@@ -377,6 +391,7 @@ def build_audioquake():
 		make_collated_dir()
 		move_app_to_collated_dir()
 		doset_only(windows=windows_make_shortcut_to_app)
+		doset_only(linux=linux_move_executables)
 		if not args.skip_zip:
 			print('Creating distributable archive')
 			make_zip()

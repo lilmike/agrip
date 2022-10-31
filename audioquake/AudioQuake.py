@@ -8,6 +8,7 @@ import launcherlib.dirs as dirs
 from launcherlib.game_controller import GameController
 from launcherlib.utils import error_message_and_title, format_bindings_as_text
 from launcherlib.ui.helpers import about_page
+from launcherlib.game_controller.speech_synth import SpeechSynth
 
 _dob_validated = None
 

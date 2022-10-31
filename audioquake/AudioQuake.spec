@@ -21,6 +21,13 @@ binary_files = doset(
 		('../giants/Quake-Tools/qutils/qbsp/light', 'maptools'),
 		('../giants/Quake-Tools/qutils/qbsp/vis', 'maptools'),
 		('../giants/Quake-Tools/qutils/qbsp/bspinfo', 'maptools')],
+	linux=[
+		('../giants/zq-repo/zquake/release-x86_64/zqds', 'engines'),
+		('../giants/zq-repo/zquake/release-x86_64/zquake-glx', 'engines'),
+		('../giants/Quake-Tools/qutils/qbsp/qbsp', 'maptools'),
+		('../giants/Quake-Tools/qutils/qbsp/light', 'maptools'),
+		('../giants/Quake-Tools/qutils/qbsp/vis', 'maptools'),
+		('../giants/Quake-Tools/qutils/qbsp/bspinfo', 'maptools')],
 	windows=[
 		('../giants/zq-repo/zquake/source/Release-server/zqds.exe', 'engines'),
 		('../giants/zq-repo/zquake/source/Release-GL/zquake-gl.exe', 'engines'),
@@ -34,6 +41,7 @@ block_cipher = None
 a = Analysis(  # noqa 821
 	['AudioQuake.py'],
 	hiddenimports=['pkg_resources.py2_warn'],
+    pathex=['../lib/buildlib', '../lib/ldllib'],
 	binaries=binary_files,
 	datas=data_files,
 	hookspath=[],
@@ -45,7 +53,7 @@ a = Analysis(  # noqa 821
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)  # noqa 821
 
-platform_icon = doset(mac='icons/aq.icns', windows='icons/aq.ico')
+platform_icon = doset(mac='icons/aq.icns', windows='icons/aq.ico', linux='icons/aq.ico')
 
 exe = EXE(  # noqa 821
 	pyz,

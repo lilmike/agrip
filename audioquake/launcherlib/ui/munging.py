@@ -20,7 +20,7 @@ def copy_paks(start, end, progress, pak0, pak1):
 		if not is_pakfile(pak):
 			raise BadPakFile(f'{pak} is not a .pak file')
 	shutil.copy(pak0, dirs.data / 'id1')
-	update(progress, start, end, 0.54, 2)  # 18 M
+	update(progress, start, end, 1, 2)  # 18 M
 	shutil.copy(pak1, dirs.data / 'id1')
 	update(progress, start, end, 2, 2)     # 33 M
 
@@ -66,5 +66,5 @@ def make_quake_wad(start, end, progress):
 
 
 def update(progress, start, end, step, of):
-	progress.Update(start + ((step / of) * (end - start)))
+	progress.Update(int(start + ((step / of) * (end - start))))
 	wx.Yield()

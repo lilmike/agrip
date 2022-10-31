@@ -20,6 +20,7 @@ class LauncherWindow(wx.Frame):
 
 		notebook = doset(
 			mac=lambda: wx.Notebook(self),
+            linux=lambda: wx.Notebook(self),
 			windows=lambda: wx.Listbook(self))
 
 		tab_play = PlayTab(notebook, game_controller)

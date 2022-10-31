@@ -19,7 +19,7 @@ class TooManyPlatformsError(Exception):
 	pass
 
 
-def _do_or_set(mac=None, windows=None, set_only=False):
+def _do_or_set(mac=None, windows=None, linux=None, set_only=False):
 	def _core(thing):
 		if callable(thing) and not set_only:
 			return thing()
@@ -31,21 +31,21 @@ def _do_or_set(mac=None, windows=None, set_only=False):
 	elif system() == 'Windows':
 		return _core(windows)
 	else:
-		raise NotImplementedError
+		return _core(linux)
 
 
-def doset(mac=None, windows=None, set_only=False):
-	if mac is None and windows is None:
+def doset(mac=None, windows=None, linux=None, set_only=False):
+	if mac is None and windows is None and linux is None:
 		raise MissingPlatformError()
-	return _do_or_set(mac, windows, set_only)
+	return _do_or_set(mac, windows, linux, set_only)
 
 
-def doset_only(mac=None, windows=None, set_only=False):
-	if mac is None and windows is None:
+def doset_only(mac=None, windows=None, linux=None, set_only=False):
+	if mac is None and windows is None and linux is None:
 		raise MissingPlatformError()
-	if mac is not None and windows is not None:
+	if (mac is not None and (windows is not None or linux is not None)) or (windows is not None and (mac is not None or linux is not None)) or (linux is not None and (windows is not None or mac is not None)):
 		raise TooManyPlatformsError()
-	return _do_or_set(mac, windows, set_only)
+	return _do_or_set(mac, windows, linux, set_only)
 
 
 #
@@ -59,7 +59,7 @@ def comeback(function):
 		try:
 			os.chdir(original)
 		except:  # noqa E727
-			die("couldn't return to original directory: " + original)
+			die("couldn't return to original directory: " + str(original))
 	return wrapper
 
 
@@ -74,7 +74,7 @@ def die(message):
 
 
 def check_platform():
-	if system() != 'Darwin' and system() != 'Windows':
+	if system() != 'Darwin' and system() != 'Windows' and system() != 'Linux':
 		die('Sorry, your platform is not supported yet.')
 
 
@@ -110,7 +110,7 @@ def make(path, name, targets=[]):
 	try:
 		os.chdir(path)
 	except:  # noqa E727
-		die("can't change directory to: " + path)
+		die("can't change directory to: " + str(path))
 	if len(targets) == 0:
 		_make(name)
 	else:
@@ -135,14 +135,17 @@ class Build:
 
 	bin_zqcc = doset(
 		mac=dir_make_zqcc / 'zqcc',
+        linux=dir_make_zqcc / 'zqcc',
 		windows=dir_make_zqcc / 'Release' / 'zqcc.exe')
 
 	bin_zqgl = doset(
 		mac=dir_make_zquake / 'release-mac' / 'zquake-glsdl',
+        linux=dir_make_zquake / 'release-x86_64' / 'zquake-glsdl',
 		windows=dir_make_zquake / 'source' / 'Release-GL' / 'zquake-gl.exe')
 
 	bin_zqds = doset(
 		mac=dir_make_zquake / 'release-mac' / 'zqds',
+        linux=dir_make_zquake / 'release-x86_64' / 'zqds',
 		windows=dir_make_zquake / 'source' / 'Release-server' / 'zqds.exe')
 
 	dir_quake_tools = base / 'giants' / 'Quake-Tools'
@@ -166,6 +169,7 @@ class Build:
 	dir_dist_rcon = dir_dist / 'rcon'
 	dir_aq_exe_internals = doset(
 		mac=dir_dist / 'AudioQuake.app' / 'Contents' / 'MacOS',
+        linux=dir_dist / 'AudioQuake',
 		windows=dir_dist / 'AudioQuake')
 	dir_dist_collated = dir_dist / 'collated'
 	dir_windows_app = 'app-gubbins'

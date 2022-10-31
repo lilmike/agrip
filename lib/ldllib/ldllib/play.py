@@ -18,6 +18,9 @@ if system() == 'Darwin':
 elif system() == 'Windows':
 	# TODO: Synch note
 	LAUNCHER = Build.dir_dist_collated / 'app-support-files' / 'AudioQuake.exe'
+elif system() == 'Linux':
+    # TODO: Synch note
+    LAUNCHER = Build.dir_dist_collated / 'app-support-files' / 'AudioQuake'
 else:
 	raise NotImplementedError
 

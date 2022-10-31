@@ -48,7 +48,7 @@ def stage_1_create_venv():
 		elif system() == 'Windows':
 			python = 'python'
 		else:
-			raise NotImplementedError
+			python = 'python'
 		try_to_run([python, '-m', 'venv', VENV])
 	else:
 		print('The environment already exists.')
@@ -59,7 +59,7 @@ def stage_1_create_venv():
 	elif system() == 'Windows':
 		print('    ' + str(VENV) + '\\Scripts\\activate.bat && python ' + WHOAMI)
 	else:
-		raise NotImplementedError
+		print('    source ' + str(VENV) + '/bin/activate && ./' + WHOAMI)
 
 
 def stage_2_bootstrap_venv():
@@ -115,7 +115,7 @@ def stage_3_build_everything():
 		elif system() == 'Windows':
 			build_everything_core_windows()
 		else:
-			raise NotImplementedError
+			build_everything_core_mac()
 	except KeyboardInterrupt:
 		print()
 

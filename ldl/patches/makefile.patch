@@ -1,5 +1,5 @@
---- makefile.orig	2020-07-11 16:56:34.000000000 +0100
-+++ makefile	2020-07-11 17:05:19.000000000 +0100
+--- makefile.orig	2023-11-09 00:38:43.684378523 -0800
++++ makefile	2023-11-09 00:38:59.076326295 -0800
 @@ -1,6 +1,6 @@
 -
 -EXES = qbsp light vis bspinfo entmap visx
@@ -10,20 +10,23 @@
  
  #==============================================================================
  
-@@ -41,25 +41,26 @@
+@@ -39,27 +39,28 @@
+          merge$(EXT) outside$(EXT) portals$(EXT) qbsp$(EXT) solidbsp$(EXT) tjunc$(EXT)\
+          writebsp$(EXT) bspfile$(EXT) nodraw$(EXT)
  qbsp : $(QBSPFILES)
- 	$(CC) $(CFLAGS) -o qbsp $(QBSPFILES)
+-	$(CC) $(CFLAGS) -o qbsp $(QBSPFILES)
++	$(CC) $(CFLAGS) -o qbsp $(QBSPFILES) -lm
++
++light : ../light/threads$(EXT) bspfile$(EXT) cmdlib$(EXT) ../light/light$(EXT) ../light/ltface$(EXT) mathlib$(EXT) ../light/trace$(EXT) ../light/entities$(EXT)
++	$(CC) $(CFLAGS) -o light ../light/threads$(EXT) bspfile$(EXT) cmdlib$(EXT) ../light/light$(EXT) ../light/ltface$(EXT) mathlib$(EXT) ../light/trace$(EXT) ../light/entities$(EXT) -lm
  
 -light : threads$(EXT) bspfile$(EXT) cmdlib$(EXT) light$(EXT) ltface$(EXT) mathlib$(EXT) trace$(EXT) entities$(EXT)
 -	$(CC) $(CFLAGS) -o light threads$(EXT) bspfile$(EXT) cmdlib$(EXT) light$(EXT) ltface$(EXT) mathlib$(EXT) trace$(EXT) entities$(EXT)
 -	
 -vis : vis$(EXT) flow$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) soundpvs$(EXT)
 -	$(CC) $(CFLAGS) -o vis vis$(EXT) flow$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) soundpvs$(EXT)
-+light : ../light/threads$(EXT) bspfile$(EXT) cmdlib$(EXT) ../light/light$(EXT) ../light/ltface$(EXT) mathlib$(EXT) ../light/trace$(EXT) ../light/entities$(EXT)
-+	$(CC) $(CFLAGS) -o light ../light/threads$(EXT) bspfile$(EXT) cmdlib$(EXT) ../light/light$(EXT) ../light/ltface$(EXT) mathlib$(EXT) ../light/trace$(EXT) ../light/entities$(EXT)
-+
 +vis : ../vis/vis$(EXT) ../vis/flow$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) ../vis/soundpvs$(EXT)
-+	$(CC) $(CFLAGS) -o vis ../vis/vis$(EXT) ../vis/flow$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) ../vis/soundpvs$(EXT)
++	$(CC) $(CFLAGS) -o vis ../vis/vis$(EXT) ../vis/flow$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) ../vis/soundpvs$(EXT) -lm
  
  visx : visx$(EXT) flowx$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) soundpvs$(EXT)
  	$(CC) $(CFLAGS) -o visx visx$(EXT) flowx$(EXT) cmdlib$(EXT) mathlib$(EXT) bspfile$(EXT) soundpvs$(EXT)
@@ -31,7 +34,7 @@
 -bspinfo : bspinfo$(EXT) bspfile$(EXT) cmdlib$(EXT)
 -	$(CC) $(CFLAGS) -o bspinfo bspinfo$(EXT) bspfile$(EXT) cmdlib$(EXT)
 +bspinfo : ../bspinfo/bspinfo$(EXT) bspfile$(EXT) cmdlib$(EXT)
-+	$(CC) $(CFLAGS) -o bspinfo ../bspinfo/bspinfo$(EXT) bspfile$(EXT) cmdlib$(EXT)
++	$(CC) $(CFLAGS) -o bspinfo ../bspinfo/bspinfo$(EXT) bspfile$(EXT) cmdlib$(EXT) -lm
  
  entmap : entmap$(EXT) cmdlib$(EXT)
  	$(CC) $(CFLAGS) -o entmap entmap$(EXT) cmdlib$(EXT)
@@ -45,7 +48,7 @@
 +cmdlib$(EXT) : ../common/cmdlib.c
 +	$(CC) $(CFLAGS) -c -o cmdlib$(EXT) ../common/cmdlib.c
 +mathlib$(EXT) : ../common/mathlib.c
-+	$(CC) $(CFLAGS) -c -o mathlib$(EXT) ../common/mathlib.c
++	$(CC) $(CFLAGS) -c -o mathlib$(EXT) ../common/mathlib.c -lm
 +bspfile$(EXT) : ../common/bspfile.c
 +	$(CC) $(CFLAGS) -c -o bspfile$(EXT) ../common/bspfile.c
  

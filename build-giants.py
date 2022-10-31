@@ -134,11 +134,13 @@ def build_giants():
 	print('Compiling zquake')
 	doset(
 		mac=compile_zquake,
+        linux=compile_zquake,
 		windows=compile_zquake_windows)
 
 	print('Compiling zqcc')
 	doset(
 		mac=compile_zqcc,
+        linux=compile_zqcc,
 		windows=compile_zqcc_windows)
 
 	print('Compiling gamecode')
@@ -154,6 +156,7 @@ def build_giants():
 	print('Compiling the Quake map tools')
 	doset(
 		mac=compile_map_tools,
+        linux=compile_map_tools,
 		windows=compile_map_tools_windows)
 
 	print('Completed building', stuff + '.')
